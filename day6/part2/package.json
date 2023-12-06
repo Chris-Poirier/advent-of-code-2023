@@ -1,0 +1,17 @@
+{
+  "name": "part2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "part2.js",
+  "scripts": {
+    "test": "node part2.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fs": "^0.0.1-security"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.3"
+  }
+}

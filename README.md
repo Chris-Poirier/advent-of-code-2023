@@ -8,3 +8,7 @@ Day 2: F#, .Net 8
 Day 3: C#, .Net 8
 
 Day 4: F#, .Net 8
+
+Day 5: C#, .NET 8 (part 2 takes 40 minutes!!!)
+
+Day 6: JS, Node
