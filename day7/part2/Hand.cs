@@ -40,6 +40,45 @@ namespace Part2 {
             return GetHandTypeFromCounts(cardCounts);
         }
 
+        private Dictionary<char, int> ApplyWildcards(Dictionary<char, int> cardCounts) { 
+            if(!cardCounts.ContainsKey('J')) {
+                return cardCounts;
+            }
+            var wildCount = cardCounts['J'];
+            var possibleHands = new List<Dictionary<char, int>>();
+
+            // Generate all possible hands by replacing J cards with every other possible value
+            for (int i = 0; i <= wildCount; i++)
+            {
+                var currentHand = new Dictionary<char, int>(cardCounts);
+                currentHand['J'] -= i;
+
+                foreach (var card in cardCounts.Keys)
+                {
+                    if (card != 'J')
+                    {
+                        currentHand[card] += i;
+                        possibleHands.Add(new Dictionary<char, int>(currentHand));
+                        currentHand[card] -= i;
+                    }
+                }
+            }
+
+            // Find the highest value hand among all possible hands
+            Dictionary<char, int> highestHand = null;
+
+            foreach (var hand in possibleHands)
+            {
+                var handType = GetHandTypeFromCounts(hand);
+                if (highestHand == null || CompareHandTypes(handType, GetHandTypeFromCounts(highestHand)) > 0)
+                {
+                    highestHand = hand;
+                }
+            }
+
+            return highestHand ?? cardCounts;
+        }
+
         private Dictionary<char, int> GetCardCounts() {
             var cardCounts = new Dictionary<char, int>();
             foreach (var card in Cards) {
@@ -47,42 +86,6 @@ namespace Part2 {
                     cardCounts.Add(card.Value, 0);
                 }
                 cardCounts[card.Value]++;
-            }
-            return cardCounts;
-        }
-
-        private Dictionary<char, int> ApplyWildcards(Dictionary<char, int> cardCounts) {
-            if (cardCounts.ContainsKey('J')) {
-                var wildCount = cardCounts['J'];
-                cardCounts.Remove('J');
-
-                // Check for five of a kind
-                var fiveKey = cardCounts.Keys.FirstOrDefault(c => cardCounts[c]+wildCount == 5);
-                if (fiveKey != default(char)) {
-                    cardCounts[fiveKey] = 5;
-                    return cardCounts;
-                }
-                // Check for four of a kind
-                var fourKey = cardCounts.Keys.FirstOrDefault(c => cardCounts[c]+wildCount == 4);
-                if (fourKey != default(char)) {
-                    cardCounts[fourKey] = 4;
-                    return cardCounts;
-                }
-
-                /*//Console.WriteLine($"Hand: {this}");
-                Hand wildHand = null;
-                foreach (var card in cardCounts.Keys) {
-                    var newCards = Cards.Select(c => new Card(c.Value)).ToList();
-                    foreach (var wildCard in newCards.Where(c => c.Value == 'J')) {
-                        wildCard.Value = card;
-                    }
-                    var newHand = new Hand(newCards, Bid);
-                    if (wildHand == null || newHand.CompareTo(wildHand) > 0) {
-                        wildHand = newHand;
-                    }
-                }
-                //Console.WriteLine($"Wild Hand: {wildHand}");
-                return wildHand != null ? wildHand.GetCardCounts() : cardCounts;*/
             }
             return cardCounts;
         }
@@ -118,9 +121,7 @@ namespace Part2 {
 
         public int CompareTo(Hand other) {
             if (Type != other.Type) {
-                var myTypeVal = Enum.GetValues(typeof(HandType)).Cast<HandType>().ToList().IndexOf(Type);
-                var otherTypeVal = Enum.GetValues(typeof(HandType)).Cast<HandType>().ToList().IndexOf(other.Type);
-                return myTypeVal.CompareTo(otherTypeVal);
+                return CompareHandTypes(Type, other.Type);
             }
             for (var i = 0; i < Cards.Count; i++) {
                 if (Cards[i].Rank > other.Cards[i].Rank) {
@@ -131,6 +132,12 @@ namespace Part2 {
                 }
             }
             return 0;
+        }
+
+        public static int CompareHandTypes(HandType type1, HandType type2) {
+            var type1Val = Enum.GetValues(typeof(HandType)).Cast<HandType>().ToList().IndexOf(type1);
+            var type2Val = Enum.GetValues(typeof(HandType)).Cast<HandType>().ToList().IndexOf(type2);
+            return type1Val.CompareTo(type2Val);
         }
 
         public override string ToString() {
