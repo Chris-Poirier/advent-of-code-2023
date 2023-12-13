@@ -15,4 +15,6 @@ Day 6: JS, Node
 
 Day 7: C#, .NET 8
 
-Day 7: F#, .NET 8
+Day 8: F#, .NET 8
+
+Day 9: F#, .NET 8
