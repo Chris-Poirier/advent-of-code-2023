@@ -15,6 +15,6 @@ Day 6: JS, Node
 
 Day 7: C#, .NET 8
 
-Day 8: F#, .NET 8
+Day 8: F#, .NET 8 (part 2 not working yet)
 
-Day 9: F#, .NET 8
+Day 9: F#, .NET 8 (part 1 gets a stack overflow)
